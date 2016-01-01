@@ -1,8 +1,31 @@
 import React from "react";
-import {Flux, Component} from 'flumpt';
+import {Flux, Component, mixin} from 'flumpt';
 import ReactDOM from 'react-dom';
 
-class TodoHeader extends Component {
+const ENTER_KEY = 13;
+
+const TodoHeader = React.createClass({
+  mixins: [mixin],
+  getInitialState() {
+    return {
+      newTodo: ""
+    };
+  },
+
+  handleCreate(e) {
+    if (e.keyCode !== ENTER_KEY) {
+      return;
+    }
+    e.preventDefault();
+
+    this.dispatch("new-todo:create", e.target.value.trim());
+    this.setState({newTodo: ''});
+  },
+
+  handleChange(e) {
+    this.setState({newTodo: e.target.value})
+  },
+
   render() {
     return (
       <header className="header">
@@ -11,11 +34,14 @@ class TodoHeader extends Component {
           className="new-todo"
           placeholder="What needs to be done?"
           autofocus={true}
+          value={this.state.newTodo}
+          onKeyDown={this.handleCreate}
+          onChange={this.handleChange}
         />
       </header>
     );
   }
-};
+});
 
 class TodoItem extends Component {
   render() {
@@ -49,7 +75,7 @@ class TodoMain extends Component {
           type="checkbox"
         />
         <ul className="todo-list">
-          <TodoItem />
+          <TodoItem {...this.props} />
         </ul>
       </section>
     );
@@ -83,12 +109,12 @@ class TodoFooter extends Component {
 };
 
 class TodoApp extends Component {
-  render() {
+  render(state) {
     return (
       <div>
-        <TodoHeader />
-        <TodoMain />
-        <TodoFooter />
+        <TodoHeader {...this.props} />
+        <TodoMain {...this.props} />
+        <TodoFooter {...this.props} />
       </div>
     );
   }
@@ -96,6 +122,12 @@ class TodoApp extends Component {
 
 class App extends Flux {
   subscribe() {
+    this.on("new-todo:create", (newTodo) => {
+      if (newTodo) {
+        // TODO: create todo
+        console.log("newTodo:", newTodo)
+      }
+    });
   }
   render(state) {
     return <TodoApp {...state} />;
@@ -106,12 +138,15 @@ const app = new App({
   renderer: el => {
     ReactDOM.render(el, document.querySelector(".todoapp"));
   },
-  initialState: {},
+  initialState: {
+    newTodo: "",
+  },
   middlewares: [
     (state) => {
+      console.log("state:");
       console.dir(state);
       return state;
     }
   ]
 });
-app.update(_initialState => ({}));
+app.update(x => x);
