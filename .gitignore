@@ -1,0 +1,21 @@
+### https://raw.github.com/github/gitignore/5979282c55da38db155427080d7a89dd31c93502/Node.gitignore
+
+lib-cov
+lcov.info
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+build
+.grunt
+
+node_modules
+
+

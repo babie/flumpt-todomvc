@@ -1,0 +1,15 @@
+{
+  "name": "flumpt-todomvc",
+  "version": "1.0.0",
+  "description": "ToDoMVC by React/Flumpt",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "babie",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:babie/flumpt-todomvc.git"
+  },
+  "license": "MIT",
+  "private": true
+}
