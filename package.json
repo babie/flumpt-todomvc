@@ -13,6 +13,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "flumpt": "^0.1.4",
     "react": "^0.14.5",
     "react-dom": "^0.14.5",
     "todomvc-app-css": "^2.0.3",
