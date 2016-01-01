@@ -19630,27 +19630,208 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var RootComponent = (function (_Component) {
-  _inherits(RootComponent, _Component);
+var TodoHeader = (function (_Component) {
+  _inherits(TodoHeader, _Component);
 
-  function RootComponent() {
-    _classCallCheck(this, RootComponent);
+  function TodoHeader() {
+    _classCallCheck(this, TodoHeader);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(RootComponent).apply(this, arguments));
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoHeader).apply(this, arguments));
   }
 
-  _createClass(RootComponent, [{
+  _createClass(TodoHeader, [{
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        'h1',
-        null,
-        'Hello, world!'
+        'header',
+        { className: 'header' },
+        _react2.default.createElement(
+          'h1',
+          null,
+          'todos'
+        ),
+        _react2.default.createElement('input', {
+          className: 'new-todo',
+          placeholder: 'What needs to be done?',
+          autofocus: true
+        })
       );
     }
   }]);
 
-  return RootComponent;
+  return TodoHeader;
+})(_flumpt.Component);
+
+;
+
+var TodoItem = (function (_Component2) {
+  _inherits(TodoItem, _Component2);
+
+  function TodoItem() {
+    _classCallCheck(this, TodoItem);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoItem).apply(this, arguments));
+  }
+
+  _createClass(TodoItem, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'li',
+        { className: '' },
+        _react2.default.createElement(
+          'div',
+          { className: 'view' },
+          _react2.default.createElement('input', {
+            className: 'toggle',
+            type: 'checkbox'
+          }),
+          _react2.default.createElement(
+            'label',
+            null,
+            'HOGE'
+          ),
+          _react2.default.createElement('button', { className: 'destroy' })
+        ),
+        _react2.default.createElement('input', {
+          ref: 'editField',
+          className: 'edit'
+        })
+      );
+    }
+  }]);
+
+  return TodoItem;
+})(_flumpt.Component);
+
+;
+
+var TodoMain = (function (_Component3) {
+  _inherits(TodoMain, _Component3);
+
+  function TodoMain() {
+    _classCallCheck(this, TodoMain);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoMain).apply(this, arguments));
+  }
+
+  _createClass(TodoMain, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'section',
+        { className: 'main' },
+        _react2.default.createElement('input', {
+          className: 'toggle-all',
+          type: 'checkbox'
+        }),
+        _react2.default.createElement(
+          'ul',
+          { className: 'todo-list' },
+          _react2.default.createElement(TodoItem, null)
+        )
+      );
+    }
+  }]);
+
+  return TodoMain;
+})(_flumpt.Component);
+
+;
+
+var TodoFooter = (function (_Component4) {
+  _inherits(TodoFooter, _Component4);
+
+  function TodoFooter() {
+    _classCallCheck(this, TodoFooter);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoFooter).apply(this, arguments));
+  }
+
+  _createClass(TodoFooter, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'footer',
+        { className: 'footer' },
+        _react2.default.createElement(
+          'span',
+          { className: 'todo-count' },
+          _react2.default.createElement(
+            'strong',
+            null,
+            '42'
+          ),
+          ' items left'
+        ),
+        _react2.default.createElement(
+          'ul',
+          { className: 'filters' },
+          _react2.default.createElement(
+            'li',
+            null,
+            _react2.default.createElement(
+              'a',
+              { href: '#/', className: 'selected' },
+              'All'
+            )
+          ),
+          _react2.default.createElement(
+            'li',
+            null,
+            _react2.default.createElement(
+              'a',
+              { href: '#/active', className: '' },
+              'Active'
+            )
+          ),
+          _react2.default.createElement(
+            'li',
+            null,
+            _react2.default.createElement(
+              'a',
+              { href: '#/completed', className: '' },
+              'Completed'
+            )
+          )
+        ),
+        _react2.default.createElement(
+          'button',
+          { className: 'clear-completed' },
+          'Clear completed'
+        )
+      );
+    }
+  }]);
+
+  return TodoFooter;
+})(_flumpt.Component);
+
+;
+
+var TodoApp = (function (_Component5) {
+  _inherits(TodoApp, _Component5);
+
+  function TodoApp() {
+    _classCallCheck(this, TodoApp);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoApp).apply(this, arguments));
+  }
+
+  _createClass(TodoApp, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(TodoHeader, null),
+        _react2.default.createElement(TodoMain, null),
+        _react2.default.createElement(TodoFooter, null)
+      );
+    }
+  }]);
+
+  return TodoApp;
 })(_flumpt.Component);
 
 ;
@@ -19670,12 +19851,14 @@ var App = (function (_Flux) {
   }, {
     key: 'render',
     value: function render(state) {
-      return _react2.default.createElement(RootComponent, state);
+      return _react2.default.createElement(TodoApp, state);
     }
   }]);
 
   return App;
 })(_flumpt.Flux);
+
+;
 
 var app = new App({
   renderer: function renderer(el) {
