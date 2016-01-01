@@ -19672,153 +19672,111 @@ var TodoHeader = _react2.default.createClass({
   }
 });
 
-var TodoItem = (function (_Component) {
-  _inherits(TodoItem, _Component);
-
-  function TodoItem() {
-    _classCallCheck(this, TodoItem);
-
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoItem).apply(this, arguments));
-  }
-
-  _createClass(TodoItem, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'li',
-        { className: '' },
-        _react2.default.createElement(
-          'div',
-          { className: 'view' },
-          _react2.default.createElement('input', {
-            className: 'toggle',
-            type: 'checkbox'
-          }),
-          _react2.default.createElement(
-            'label',
-            null,
-            'HOGE'
-          ),
-          _react2.default.createElement('button', { className: 'destroy' })
-        ),
+var TodoItem = _react2.default.createClass({
+  mixins: [_flumpt.mixin],
+  render: function render() {
+    return _react2.default.createElement(
+      'li',
+      { className: '' },
+      _react2.default.createElement(
+        'div',
+        { className: 'view' },
         _react2.default.createElement('input', {
-          ref: 'editField',
-          className: 'edit'
-        })
-      );
-    }
-  }]);
-
-  return TodoItem;
-})(_flumpt.Component);
-
-;
-
-var TodoMain = (function (_Component2) {
-  _inherits(TodoMain, _Component2);
-
-  function TodoMain() {
-    _classCallCheck(this, TodoMain);
-
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoMain).apply(this, arguments));
-  }
-
-  _createClass(TodoMain, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'section',
-        { className: 'main' },
-        _react2.default.createElement('input', {
-          className: 'toggle-all',
+          className: 'toggle',
           type: 'checkbox'
         }),
         _react2.default.createElement(
-          'ul',
-          { className: 'todo-list' },
-          _react2.default.createElement(TodoItem, this.props)
-        )
-      );
-    }
-  }]);
-
-  return TodoMain;
-})(_flumpt.Component);
-
-;
-
-var TodoFooter = (function (_Component3) {
-  _inherits(TodoFooter, _Component3);
-
-  function TodoFooter() {
-    _classCallCheck(this, TodoFooter);
-
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoFooter).apply(this, arguments));
-  }
-
-  _createClass(TodoFooter, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'footer',
-        { className: 'footer' },
-        _react2.default.createElement(
-          'span',
-          { className: 'todo-count' },
-          _react2.default.createElement(
-            'strong',
-            null,
-            '42'
-          ),
-          ' items left'
+          'label',
+          null,
+          'HOGE'
         ),
+        _react2.default.createElement('button', { className: 'destroy' })
+      ),
+      _react2.default.createElement('input', {
+        ref: 'editField',
+        className: 'edit'
+      })
+    );
+  }
+});
+
+var TodoMain = _react2.default.createClass({
+  mixins: [_flumpt.mixin],
+  render: function render() {
+    return _react2.default.createElement(
+      'section',
+      { className: 'main' },
+      _react2.default.createElement('input', {
+        className: 'toggle-all',
+        type: 'checkbox'
+      }),
+      _react2.default.createElement(
+        'ul',
+        { className: 'todo-list' },
+        _react2.default.createElement(TodoItem, this.props)
+      )
+    );
+  }
+});
+
+var TodoFooter = _react2.default.createClass({
+  mixins: [_flumpt.mixin],
+  render: function render() {
+    return _react2.default.createElement(
+      'footer',
+      { className: 'footer' },
+      _react2.default.createElement(
+        'span',
+        { className: 'todo-count' },
         _react2.default.createElement(
-          'ul',
-          { className: 'filters' },
+          'strong',
+          null,
+          '42'
+        ),
+        ' items left'
+      ),
+      _react2.default.createElement(
+        'ul',
+        { className: 'filters' },
+        _react2.default.createElement(
+          'li',
+          null,
           _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'a',
-              { href: '#/', className: 'selected' },
-              'All'
-            )
-          ),
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'a',
-              { href: '#/active', className: '' },
-              'Active'
-            )
-          ),
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              'a',
-              { href: '#/completed', className: '' },
-              'Completed'
-            )
+            'a',
+            { href: '#/', className: 'selected' },
+            'All'
           )
         ),
         _react2.default.createElement(
-          'button',
-          { className: 'clear-completed' },
-          'Clear completed'
+          'li',
+          null,
+          _react2.default.createElement(
+            'a',
+            { href: '#/active', className: '' },
+            'Active'
+          )
+        ),
+        _react2.default.createElement(
+          'li',
+          null,
+          _react2.default.createElement(
+            'a',
+            { href: '#/completed', className: '' },
+            'Completed'
+          )
         )
-      );
-    }
-  }]);
+      ),
+      _react2.default.createElement(
+        'button',
+        { className: 'clear-completed' },
+        'Clear completed'
+      )
+    );
+  }
+});
 
-  return TodoFooter;
-})(_flumpt.Component);
-
-;
-
-var TodoApp = (function (_Component4) {
-  _inherits(TodoApp, _Component4);
+var TodoApp = (function (_Component) {
+  _inherits(TodoApp, _Component);
 
   function TodoApp() {
     _classCallCheck(this, TodoApp);

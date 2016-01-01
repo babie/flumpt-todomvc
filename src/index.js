@@ -43,7 +43,8 @@ const TodoHeader = React.createClass({
   }
 });
 
-class TodoItem extends Component {
+const TodoItem = React.createClass({
+  mixins: [mixin],
   render() {
     return (
       <li className="">
@@ -64,9 +65,10 @@ class TodoItem extends Component {
       </li>
     );
   }
-};
+});
 
-class TodoMain extends Component {
+const TodoMain = React.createClass({
+  mixins: [mixin],
   render() {
     return (
       <section className="main">
@@ -80,9 +82,10 @@ class TodoMain extends Component {
       </section>
     );
   }
-};
+});
 
-class TodoFooter extends Component {
+const TodoFooter = React.createClass({
+  mixins: [mixin],
   render() {
     return (
       <footer className="footer">
@@ -106,7 +109,7 @@ class TodoFooter extends Component {
       </footer>
     );
   }
-};
+});
 
 class TodoApp extends Component {
   render(state) {
