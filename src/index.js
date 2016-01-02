@@ -46,15 +46,18 @@ const TodoHeader = React.createClass({
 const TodoItem = React.createClass({
   mixins: [mixin],
   render() {
+    let todo = this.props.todo;
+
     return (
       <li className="">
         <div className="view">
           <input
             className="toggle"
             type="checkbox"
+            checked={todo.completed}
           />
           <label>
-            HOGE
+            {todo.title}
           </label>
           <button className="destroy" />
         </div>
@@ -70,6 +73,13 @@ const TodoItem = React.createClass({
 const TodoMain = React.createClass({
   mixins: [mixin],
   render() {
+    let todos = this.props.todos;
+    let todoItems = todos.map((todo) => {
+      return (
+        <TodoItem todo={todo} />
+      );
+    });
+
     return (
       <section className="main">
         <input
@@ -77,7 +87,7 @@ const TodoMain = React.createClass({
           type="checkbox"
         />
         <ul className="todo-list">
-          <TodoItem {...this.props} />
+          {todoItems}
         </ul>
       </section>
     );

@@ -19675,6 +19675,8 @@ var TodoHeader = _react2.default.createClass({
 var TodoItem = _react2.default.createClass({
   mixins: [_flumpt.mixin],
   render: function render() {
+    var todo = this.props.todo;
+
     return _react2.default.createElement(
       'li',
       { className: '' },
@@ -19683,12 +19685,13 @@ var TodoItem = _react2.default.createClass({
         { className: 'view' },
         _react2.default.createElement('input', {
           className: 'toggle',
-          type: 'checkbox'
+          type: 'checkbox',
+          checked: todo.completed
         }),
         _react2.default.createElement(
           'label',
           null,
-          'HOGE'
+          todo.title
         ),
         _react2.default.createElement('button', { className: 'destroy' })
       ),
@@ -19703,6 +19706,11 @@ var TodoItem = _react2.default.createClass({
 var TodoMain = _react2.default.createClass({
   mixins: [_flumpt.mixin],
   render: function render() {
+    var todos = this.props.todos;
+    var todoItems = todos.map(function (todo) {
+      return _react2.default.createElement(TodoItem, { todo: todo });
+    });
+
     return _react2.default.createElement(
       'section',
       { className: 'main' },
@@ -19713,7 +19721,7 @@ var TodoMain = _react2.default.createClass({
       _react2.default.createElement(
         'ul',
         { className: 'todo-list' },
-        _react2.default.createElement(TodoItem, this.props)
+        todoItems
       )
     );
   }
