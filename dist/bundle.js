@@ -19722,6 +19722,12 @@ var TodoMain = _react2.default.createClass({
 var TodoFooter = _react2.default.createClass({
   mixins: [_flumpt.mixin],
   render: function render() {
+    var todos = this.props.todos;
+    var activeCount = todos.reduce(function (acc, todo) {
+      return todo.completed ? acc : acc + 1;
+    }, 0);
+    var unitStr = activeCount > 1 ? 'items' : 'item';
+
     return _react2.default.createElement(
       'footer',
       { className: 'footer' },
@@ -19731,9 +19737,11 @@ var TodoFooter = _react2.default.createClass({
         _react2.default.createElement(
           'strong',
           null,
-          '42'
+          activeCount
         ),
-        ' items left'
+        ' ',
+        unitStr,
+        ' left'
       ),
       _react2.default.createElement(
         'ul',
@@ -19838,7 +19846,7 @@ var app = new App({
     _reactDom2.default.render(el, document.querySelector(".todoapp"));
   },
   initialState: {
-    newTodo: ""
+    todos: [{ id: 1, title: "やること1", completed: true }, { id: 2, title: "やること2", completed: true }, { id: 3, title: "やること3", completed: false }, { id: 4, title: "やること4", completed: false }, { id: 5, title: "やること5", completed: false }]
   },
   middlewares: [function (state) {
     console.log("state:");

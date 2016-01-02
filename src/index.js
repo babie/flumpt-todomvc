@@ -87,10 +87,16 @@ const TodoMain = React.createClass({
 const TodoFooter = React.createClass({
   mixins: [mixin],
   render() {
+    let todos = this.props.todos;
+    let activeCount = todos.reduce((acc, todo) => {
+      return todo.completed ? acc : acc + 1;
+    }, 0);
+    let unitStr = activeCount > 1 ? 'items' : 'item';
+
     return (
       <footer className="footer">
         <span className="todo-count">
-          <strong>42</strong> items left
+          <strong>{activeCount}</strong> {unitStr} left
         </span>
         <ul className="filters">
           <li>
@@ -142,7 +148,13 @@ const app = new App({
     ReactDOM.render(el, document.querySelector(".todoapp"));
   },
   initialState: {
-    newTodo: "",
+    todos: [
+      {id: 1, title: "やること1", completed: true},
+      {id: 2, title: "やること2", completed: true},
+      {id: 3, title: "やること3", completed: false},
+      {id: 4, title: "やること4", completed: false},
+      {id: 5, title: "やること5", completed: false},
+    ]
   },
   middlewares: [
     (state) => {
