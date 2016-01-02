@@ -5,6 +5,22 @@ import _ from 'lodash';
 
 const ENTER_KEY = 13;
 
+const Utils = {
+  uuid() {
+    let i, random;
+    let uuid = '';
+
+    for (i = 0; i < 32; i++) {
+      random = Math.random() * 16 | 0;
+      if (i === 8 || i === 12 || i === 16 || i == 20) {
+        uuid += '-';
+      }
+      uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random)).toString(16);
+    }
+    return uuid;
+  }
+}
+
 const TodoHeader = React.createClass({
   mixins: [mixin],
   getInitialState() {
@@ -163,10 +179,17 @@ class TodoApp extends Component {
 
 class App extends Flux {
   subscribe() {
-    this.on("todo:create", (newTodo) => {
-      if (newTodo) {
-        // TODO: create todo
-        console.log("newTodo:", newTodo)
+    this.on("todo:create", (newTodoTitle) => {
+      if (newTodoTitle) {
+        let newTodo = {
+          id: Utils.uuid(),
+          title: newTodoTitle,
+          completed: false
+        };
+        let newTodos = this.state.todos.concat([newTodo]);
+        this.update(({todos}) => {
+          return {todos: newTodos};
+        });
       }
     });
     this.on("todo:clear-completed", () => {
@@ -189,11 +212,11 @@ const app = new App({
   },
   initialState: {
     todos: [
-      {id: 1, title: "やること1", completed: true},
-      {id: 2, title: "やること2", completed: true},
-      {id: 3, title: "やること3", completed: false},
-      {id: 4, title: "やること4", completed: false},
-      {id: 5, title: "やること5", completed: false},
+      {id: Utils.uuid(), title: "やること1", completed: true},
+      {id: Utils.uuid(), title: "やること2", completed: true},
+      {id: Utils.uuid(), title: "やること3", completed: false},
+      {id: Utils.uuid(), title: "やること4", completed: false},
+      {id: Utils.uuid(), title: "やること5", completed: false},
     ]
   },
   middlewares: [

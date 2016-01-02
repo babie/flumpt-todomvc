@@ -31991,6 +31991,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var ENTER_KEY = 13;
 
+var Utils = {
+  uuid: function uuid() {
+    var i = undefined,
+        random = undefined;
+    var uuid = '';
+
+    for (i = 0; i < 32; i++) {
+      random = Math.random() * 16 | 0;
+      if (i === 8 || i === 12 || i === 16 || i == 20) {
+        uuid += '-';
+      }
+      uuid += (i === 12 ? 4 : i === 16 ? random & 3 | 8 : random).toString(16);
+    }
+    return uuid;
+  }
+};
+
 var TodoHeader = _react2.default.createClass({
   mixins: [_flumpt.mixin],
   getInitialState: function getInitialState() {
@@ -32208,18 +32225,29 @@ var App = (function (_Flux) {
     value: function subscribe() {
       var _this3 = this;
 
-      this.on("todo:create", function (newTodo) {
-        if (newTodo) {
-          // TODO: create todo
-          console.log("newTodo:", newTodo);
+      this.on("todo:create", function (newTodoTitle) {
+        if (newTodoTitle) {
+          (function () {
+            var newTodo = {
+              id: Utils.uuid(),
+              title: newTodoTitle,
+              completed: false
+            };
+            var newTodos = _this3.state.todos.concat([newTodo]);
+            _this3.update(function (_ref) {
+              var todos = _ref.todos;
+
+              return { todos: newTodos };
+            });
+          })();
         }
       });
       this.on("todo:clear-completed", function () {
         var newTodos = _lodash2.default.reject(_this3.state.todos, function (todo) {
           return todo.completed == true;
         });
-        _this3.update(function (_ref) {
-          var todos = _ref.todos;
+        _this3.update(function (_ref2) {
+          var todos = _ref2.todos;
 
           return { todos: newTodos };
         });
@@ -32242,7 +32270,7 @@ var app = new App({
     _reactDom2.default.render(el, document.querySelector(".todoapp"));
   },
   initialState: {
-    todos: [{ id: 1, title: "やること1", completed: true }, { id: 2, title: "やること2", completed: true }, { id: 3, title: "やること3", completed: false }, { id: 4, title: "やること4", completed: false }, { id: 5, title: "やること5", completed: false }]
+    todos: [{ id: Utils.uuid(), title: "やること1", completed: true }, { id: Utils.uuid(), title: "やること2", completed: true }, { id: Utils.uuid(), title: "やること3", completed: false }, { id: Utils.uuid(), title: "やること4", completed: false }, { id: Utils.uuid(), title: "やること5", completed: false }]
   },
   middlewares: [function (state) {
     console.log("state:");
