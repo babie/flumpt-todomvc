@@ -19645,7 +19645,7 @@ var TodoHeader = _react2.default.createClass({
     }
     e.preventDefault();
 
-    this.dispatch("new-todo:create", e.target.value.trim());
+    this.dispatch("todo:create", e.target.value.trim());
     this.setState({ newTodo: '' });
   },
   handleChange: function handleChange(e) {
@@ -19721,12 +19721,28 @@ var TodoMain = _react2.default.createClass({
 
 var TodoFooter = _react2.default.createClass({
   mixins: [_flumpt.mixin],
+
+  handleClearCompleted: function handleClearCompleted(e) {
+    this.dispatch("todo:clear-completed");
+  },
   render: function render() {
     var todos = this.props.todos;
     var activeCount = todos.reduce(function (acc, todo) {
       return todo.completed ? acc : acc + 1;
     }, 0);
     var unitStr = activeCount > 1 ? 'items' : 'item';
+    var completedCount = todos.length - activeCount;
+
+    var clearButton = null;
+    if (completedCount > 0) {
+      clearButton = _react2.default.createElement(
+        'button',
+        {
+          className: 'clear-completed',
+          onClick: this.handleClearCompleted },
+        'Clear completed'
+      );
+    }
 
     return _react2.default.createElement(
       'footer',
@@ -19774,11 +19790,7 @@ var TodoFooter = _react2.default.createClass({
           )
         )
       ),
-      _react2.default.createElement(
-        'button',
-        { className: 'clear-completed' },
-        'Clear completed'
-      )
+      clearButton
     );
   }
 });
@@ -19822,11 +19834,15 @@ var App = (function (_Flux) {
   _createClass(App, [{
     key: 'subscribe',
     value: function subscribe() {
-      this.on("new-todo:create", function (newTodo) {
+      this.on("todo:create", function (newTodo) {
         if (newTodo) {
           // TODO: create todo
           console.log("newTodo:", newTodo);
         }
+      });
+      this.on("todo:clear-completed", function () {
+        // TODO: clear completed todos
+        console.log("clear-completed");
       });
     }
   }, {

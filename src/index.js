@@ -18,7 +18,7 @@ const TodoHeader = React.createClass({
     }
     e.preventDefault();
 
-    this.dispatch("new-todo:create", e.target.value.trim());
+    this.dispatch("todo:create", e.target.value.trim());
     this.setState({newTodo: ''});
   },
 
@@ -86,12 +86,29 @@ const TodoMain = React.createClass({
 
 const TodoFooter = React.createClass({
   mixins: [mixin],
+
+  handleClearCompleted(e) {
+    this.dispatch("todo:clear-completed");
+  },
+
   render() {
     let todos = this.props.todos;
     let activeCount = todos.reduce((acc, todo) => {
       return todo.completed ? acc : acc + 1;
     }, 0);
     let unitStr = activeCount > 1 ? 'items' : 'item';
+    let completedCount = todos.length - activeCount;
+
+    let clearButton = null;
+    if (completedCount > 0) {
+      clearButton = (
+        <button
+          className="clear-completed"
+          onClick={this.handleClearCompleted}>
+          Clear completed
+        </button>
+      );
+    }
 
     return (
       <footer className="footer">
@@ -109,9 +126,7 @@ const TodoFooter = React.createClass({
             <a href="#/completed" className="">Completed</a>
           </li>
         </ul>
-        <button className="clear-completed">
-          Clear completed
-        </button>
+        {clearButton}
       </footer>
     );
   }
@@ -131,11 +146,15 @@ class TodoApp extends Component {
 
 class App extends Flux {
   subscribe() {
-    this.on("new-todo:create", (newTodo) => {
+    this.on("todo:create", (newTodo) => {
       if (newTodo) {
         // TODO: create todo
         console.log("newTodo:", newTodo)
       }
+    });
+    this.on("todo:clear-completed", () => {
+      // TODO: clear completed todos
+      console.log("clear-completed")
     });
   }
   render(state) {
