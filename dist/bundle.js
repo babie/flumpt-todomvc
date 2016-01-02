@@ -32197,7 +32197,6 @@ var TodoFooter = _react2.default.createClass({
   },
   render: function render() {
     var todos = this.props.todos;
-    console.dir(todos);
     var activeCount = todos.reduce(function (acc, todo) {
       return todo.completed ? acc : acc + 1;
     }, 0);
@@ -32284,13 +32283,20 @@ var TodoApp = (function (_Component) {
 
   _createClass(TodoApp, [{
     key: 'render',
-    value: function render(state) {
+    value: function render() {
+      var main = null;
+      var footer = null;
+      if (this.props.todos.length > 0) {
+        main = _react2.default.createElement(TodoMain, this.props);
+        footer = _react2.default.createElement(TodoFooter, this.props);
+      }
+
       return _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(TodoHeader, this.props),
-        _react2.default.createElement(TodoMain, this.props),
-        _react2.default.createElement(TodoFooter, this.props)
+        main,
+        footer
       );
     }
   }]);

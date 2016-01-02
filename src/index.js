@@ -155,7 +155,6 @@ const TodoFooter = React.createClass({
 
   render() {
     let todos = this.props.todos;
-    console.dir(todos);
     let activeCount = todos.reduce((acc, todo) => {
       return todo.completed ? acc : acc + 1;
     }, 0);
@@ -209,12 +208,23 @@ const TodoFooter = React.createClass({
 });
 
 class TodoApp extends Component {
-  render(state) {
+  render() {
+    let main = null;
+    let footer = null;
+    if (this.props.todos.length > 0) {
+      main = (
+        <TodoMain {...this.props} />
+      );
+      footer = (
+        <TodoFooter {...this.props} />
+      );
+    }
+
     return (
       <div>
         <TodoHeader {...this.props} />
-        <TodoMain {...this.props} />
-        <TodoFooter {...this.props} />
+        {main}
+        {footer}
       </div>
     );
   }
@@ -267,6 +277,7 @@ class App extends Flux {
       });
     });
   }
+
   render(state) {
     return <TodoApp {...state} />;
   }
