@@ -2,8 +2,12 @@ import React from "react";
 import {Flux, Component, mixin} from 'flumpt';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 const ENTER_KEY = 13;
+const ALL_TODOS = 'all';
+const ACTIVE_TODOS = 'active';
+const COMPLETED_TODOS = 'completed';
 
 const Utils = {
   uuid() {
@@ -95,9 +99,22 @@ const TodoItem = React.createClass({
 
 const TodoMain = React.createClass({
   mixins: [mixin],
+
   render() {
     let todos = this.props.todos;
-    let todoItems = todos.map((todo) => {
+
+    let shownTodos = _.filter(todos, (todo) => {
+      switch (this.props.nowShowing) {
+        case ACTIVE_TODOS:
+          return !todo.completed;
+        case COMPLETED_TODOS:
+          return todo.completed;
+        default:
+          return true;
+      }
+    }, this);
+
+    let todoItems = shownTodos.map((todo) => {
       return (
         <TodoItem key={todo.id} todo={todo} />
       );
@@ -124,13 +141,27 @@ const TodoFooter = React.createClass({
     this.dispatch("todo:clear-completed");
   },
 
+  handleAllClick(e) {
+    this.dispatch("showing:change", ALL_TODOS);
+  },
+
+  handleActiveClick(e) {
+    this.dispatch("showing:change", ACTIVE_TODOS);
+  },
+
+  handleCompletedClick(e) {
+    this.dispatch("showing:change", COMPLETED_TODOS);
+  },
+
   render() {
     let todos = this.props.todos;
+    console.dir(todos);
     let activeCount = todos.reduce((acc, todo) => {
       return todo.completed ? acc : acc + 1;
     }, 0);
     let unitStr = activeCount > 1 ? 'items' : 'item';
     let completedCount = todos.length - activeCount;
+    let nowShowing = this.props.nowShowing;
 
     let clearButton = null;
     if (completedCount > 0) {
@@ -150,13 +181,25 @@ const TodoFooter = React.createClass({
         </span>
         <ul className="filters">
           <li>
-            <a href="#/" className="selected">All</a>
+            <a href="#/"
+              className={classNames({selected: nowShowing === ALL_TODOS})}
+              onClick={this.handleAllClick}>
+              All
+            </a>
           </li>
           <li>
-            <a href="#/active" className="">Active</a>
+            <a href="#/active"
+              className={classNames({selected: nowShowing === ACTIVE_TODOS})}
+              onClick={this.handleActiveClick}>
+              Active
+            </a>
           </li>
           <li>
-            <a href="#/completed" className="">Completed</a>
+            <a href="#/completed"
+              className={classNames({selected: nowShowing === COMPLETED_TODOS})}
+              onClick={this.handleCompletedClick}>
+              Completed
+            </a>
           </li>
         </ul>
         {clearButton}
@@ -187,17 +230,24 @@ class App extends Flux {
           completed: false
         };
         let newTodos = this.state.todos.concat([newTodo]);
-        this.update(({todos}) => {
-          return {todos: newTodos};
+        this.update((state) => {
+          return _.set(state, 'todos', newTodos);
         });
       }
     });
+
+    this.on("showing:change", (newShowing) => {
+      this.update((state) => {
+        return _.set(state, 'nowShowing', newShowing);
+      });
+    });
+
     this.on("todo:clear-completed", () => {
       let newTodos = _.reject(this.state.todos, (todo) => {
         return todo.completed == true
       });
-      this.update(({todos}) => {
-        return {todos: newTodos};
+      this.update((state) => {
+        return _.set(state, 'todos', newTodos);
       });
     });
   }
@@ -217,7 +267,8 @@ const app = new App({
       {id: Utils.uuid(), title: "やること3", completed: false},
       {id: Utils.uuid(), title: "やること4", completed: false},
       {id: Utils.uuid(), title: "やること5", completed: false},
-    ]
+    ],
+    nowShowing: ALL_TODOS,
   },
   middlewares: [
     (state) => {

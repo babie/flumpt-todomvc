@@ -14,6 +14,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "classnames": "^2.2.1",
     "flumpt": "^0.1.4",
     "lodash": "^3.10.1",
     "react": "^0.14.5",
