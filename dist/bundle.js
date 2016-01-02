@@ -32111,6 +32111,9 @@ var TodoItem = _react2.default.createClass({
   handleToggle: function handleToggle(e) {
     this.dispatch("todo:toggle", this.props.todo);
   },
+  handleDestroy: function handleDestroy(e) {
+    this.dispatch("todo:destroy", this.props.todo);
+  },
   render: function render() {
     var todo = this.props.todo;
 
@@ -32131,7 +32134,7 @@ var TodoItem = _react2.default.createClass({
           null,
           todo.title
         ),
-        _react2.default.createElement('button', { className: 'destroy' })
+        _react2.default.createElement('button', { className: 'destroy', onClick: this.handleDestroy })
       ),
       _react2.default.createElement('input', {
         ref: 'editField',
@@ -32320,6 +32323,7 @@ var App = (function (_Flux) {
     value: function subscribe() {
       var _this4 = this;
 
+      // Header
       this.on("todo:create", function (newTodoTitle) {
         if (newTodoTitle) {
           (function () {
@@ -32336,21 +32340,31 @@ var App = (function (_Flux) {
         }
       });
 
+      // Main
       this.on("todo:toggle", function (todo) {
         var newTodos = _lodash2.default.map(_this4.state.todos, function (t) {
           var newTodo = t;
           if (t.id === todo.id) {
             newTodo.completed = !t.completed;
             return newTodo;
-          } else {
-            return t;
           }
+          return t;
         });
         _this4.update(function (state) {
-          return _lodash2.default.set(state, todo, newTodos);
+          return _lodash2.default.set(state, 'todos', newTodos);
         });
       });
 
+      this.on("todo:destroy", function (todo) {
+        var newTodos = _lodash2.default.reject(_this4.state.todos, function (t) {
+          return t.id === todo.id;
+        });
+        _this4.update(function (state) {
+          return _lodash2.default.set(state, 'todos', newTodos);
+        });
+      });
+
+      // Footer
       this.on("showing:change", function (newShowing) {
         _this4.update(function (state) {
           return _lodash2.default.set(state, 'nowShowing', newShowing);

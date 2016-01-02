@@ -71,6 +71,10 @@ const TodoItem = React.createClass({
     this.dispatch("todo:toggle", this.props.todo);
   },
 
+  handleDestroy(e) {
+    this.dispatch("todo:destroy", this.props.todo);
+  },
+
   render() {
     let todo = this.props.todo;
 
@@ -86,7 +90,7 @@ const TodoItem = React.createClass({
           <label>
             {todo.title}
           </label>
-          <button className="destroy" />
+          <button className="destroy" onClick={this.handleDestroy} />
         </div>
         <input
           ref="editField"
@@ -232,6 +236,7 @@ class TodoApp extends Component {
 
 class App extends Flux {
   subscribe() {
+    // Header
     this.on("todo:create", (newTodoTitle) => {
       if (newTodoTitle) {
         let newTodo = {
@@ -246,6 +251,7 @@ class App extends Flux {
       }
     });
 
+    // Main
     this.on("todo:toggle", (todo) => {
       let newTodos = _.map(this.state.todos, (t) => {
         let newTodo = t;
@@ -253,15 +259,23 @@ class App extends Flux {
           newTodo.completed = !t.completed
           return newTodo;
         }
-        else {
-          return t;
-        }
+        return t;
       })
       this.update((state) => {
-        return _.set(state, todo, newTodos);
+        return _.set(state, 'todos', newTodos);
       });
     });
 
+    this.on("todo:destroy", (todo) => {
+      let newTodos = _.reject(this.state.todos, (t) => {
+        return t.id === todo.id;
+      });
+      this.update((state) => {
+        return _.set(state, 'todos', newTodos);
+      });
+    });
+
+    // Footer
     this.on("showing:change", (newShowing) => {
       this.update((state) => {
         return _.set(state, 'nowShowing', newShowing);
