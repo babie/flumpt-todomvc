@@ -67,15 +67,15 @@ const TodoHeader = React.createClass({
 const TodoItem = React.createClass({
   mixins: [mixin],
 
-  handleToggle() {
-    // TODO
+  handleToggle(e) {
+    this.dispatch("todo:toggle", this.props.todo);
   },
 
   render() {
     let todo = this.props.todo;
 
     return (
-      <li className="">
+      <li className={classNames({completed: todo.completed})}>
         <div className="view">
           <input
             className="toggle"
@@ -234,6 +234,22 @@ class App extends Flux {
           return _.set(state, 'todos', newTodos);
         });
       }
+    });
+
+    this.on("todo:toggle", (todo) => {
+      let newTodos = _.map(this.state.todos, (t) => {
+        let newTodo = t;
+        if (t.id === todo.id) {
+          newTodo.completed = !t.completed
+          return newTodo;
+        }
+        else {
+          return t;
+        }
+      })
+      this.update((state) => {
+        return _.set(state, todo, newTodos);
+      });
     });
 
     this.on("showing:change", (newShowing) => {

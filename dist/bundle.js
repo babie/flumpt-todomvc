@@ -32108,15 +32108,15 @@ var TodoHeader = _react2.default.createClass({
 var TodoItem = _react2.default.createClass({
   mixins: [_flumpt.mixin],
 
-  handleToggle: function handleToggle() {
-    // TODO
+  handleToggle: function handleToggle(e) {
+    this.dispatch("todo:toggle", this.props.todo);
   },
   render: function render() {
     var todo = this.props.todo;
 
     return _react2.default.createElement(
       'li',
-      { className: '' },
+      { className: (0, _classnames2.default)({ completed: todo.completed }) },
       _react2.default.createElement(
         'div',
         { className: 'view' },
@@ -32328,6 +32328,21 @@ var App = (function (_Flux) {
             });
           })();
         }
+      });
+
+      this.on("todo:toggle", function (todo) {
+        var newTodos = _lodash2.default.map(_this4.state.todos, function (t) {
+          var newTodo = t;
+          if (t.id === todo.id) {
+            newTodo.completed = !t.completed;
+            return newTodo;
+          } else {
+            return t;
+          }
+        });
+        _this4.update(function (state) {
+          return _lodash2.default.set(state, todo, newTodos);
+        });
       });
 
       this.on("showing:change", function (newShowing) {
