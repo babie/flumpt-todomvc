@@ -32044,6 +32044,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var ENTER_KEY = 13;
+var ESCAPE_KEY = 27;
+
 var ALL_TODOS = 'all';
 var ACTIVE_TODOS = 'active';
 var COMPLETED_TODOS = 'completed';
@@ -32108,8 +32110,49 @@ var TodoHeader = _react2.default.createClass({
 var TodoItem = _react2.default.createClass({
   mixins: [_flumpt.mixin],
 
+  getInitialState: function getInitialState() {
+    return {
+      editing: false,
+      editText: this.props.todo.title
+    };
+  },
+  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.todo !== this.props.todo || nextState.editing !== this.state.editing || nextState.editText !== this.state.editText;
+  },
+  componentDidUpdate: function componentDidUpdate(prevProps) {
+    if (!prevProps.editing && this.state.editing) {
+      var node = this.refs.editField;
+      node.focus();
+      node.setSelectionRange(node.value.length, node.value.length);
+    }
+  },
   handleToggle: function handleToggle(e) {
     this.dispatch("todo:toggle", this.props.todo);
+  },
+  handleEdit: function handleEdit() {
+    this.setState({ editing: true });
+  },
+  handleUpdate: function handleUpdate(e) {
+    var value = e.target.value.trim();
+    if (value) {
+      var todo = _lodash2.default.set(this.props.todo, 'title', e.target.value.trim());
+      this.dispatch("todo:update", todo);
+      this.setState({ editing: false, editText: todo.title });
+    } else {
+      this.dispatch("todo:destroy", this.props.todo);
+    }
+  },
+  handleChange: function handleChange(e) {
+    if (this.state.editing) {
+      this.setState({ editText: e.target.value });
+    }
+  },
+  handleKeyDown: function handleKeyDown(e) {
+    if (e.which === ESCAPE_KEY) {
+      this.setState({ editing: false, editText: this.props.todo.title });
+    } else if (e.which === ENTER_KEY) {
+      this.handleUpdate(e);
+    }
   },
   handleDestroy: function handleDestroy(e) {
     this.dispatch("todo:destroy", this.props.todo);
@@ -32119,7 +32162,7 @@ var TodoItem = _react2.default.createClass({
 
     return _react2.default.createElement(
       'li',
-      { className: (0, _classnames2.default)({ completed: todo.completed }) },
+      { className: (0, _classnames2.default)({ completed: todo.completed, editing: this.state.editing }) },
       _react2.default.createElement(
         'div',
         { className: 'view' },
@@ -32131,14 +32174,18 @@ var TodoItem = _react2.default.createClass({
         }),
         _react2.default.createElement(
           'label',
-          null,
+          { onDoubleClick: this.handleEdit },
           todo.title
         ),
         _react2.default.createElement('button', { className: 'destroy', onClick: this.handleDestroy })
       ),
       _react2.default.createElement('input', {
         ref: 'editField',
-        className: 'edit'
+        className: 'edit',
+        value: this.state.editText,
+        onBlur: this.handleUpdate,
+        onChange: this.handleChange,
+        onKeyDown: this.handleKeyDown
       })
     );
   }
@@ -32343,9 +32390,23 @@ var App = (function (_Flux) {
       // Main
       this.on("todo:toggle", function (todo) {
         var newTodos = _lodash2.default.map(_this4.state.todos, function (t) {
-          var newTodo = t;
-          if (t.id === todo.id) {
+          var newTodo = _lodash2.default.clone(t, true);
+          if (t.id == todo.id) {
             newTodo.completed = !t.completed;
+            return newTodo;
+          }
+          return t;
+        });
+        _this4.update(function (state) {
+          return _lodash2.default.set(state, 'todos', newTodos);
+        });
+      });
+
+      this.on("todo:update", function (todo) {
+        var newTodos = _lodash2.default.map(_this4.state.todos, function (t) {
+          var newTodo = _lodash2.default.clone(t, true);
+          if (t.id == todo.id) {
+            newTodo.title = todo.title;
             return newTodo;
           }
           return t;
@@ -32357,7 +32418,7 @@ var App = (function (_Flux) {
 
       this.on("todo:destroy", function (todo) {
         var newTodos = _lodash2.default.reject(_this4.state.todos, function (t) {
-          return t.id === todo.id;
+          return t.id == todo.id;
         });
         _this4.update(function (state) {
           return _lodash2.default.set(state, 'todos', newTodos);
@@ -32400,11 +32461,16 @@ var app = new App({
     todos: [{ id: Utils.uuid(), title: "やること1", completed: true }, { id: Utils.uuid(), title: "やること2", completed: true }, { id: Utils.uuid(), title: "やること3", completed: false }, { id: Utils.uuid(), title: "やること4", completed: false }, { id: Utils.uuid(), title: "やること5", completed: false }],
     nowShowing: ALL_TODOS
   },
-  middlewares: [function (state) {
-    console.log("state:");
-    console.dir(state);
-    return state;
-  }]
+  middlewares: [
+    // Logger
+    /*
+    (state) => {
+      console.log("state:");
+      console.dir(state);
+      return state;
+    }
+    */
+  ]
 });
 app.update(function (x) {
   return x;

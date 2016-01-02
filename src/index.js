@@ -5,6 +5,8 @@ import _ from 'lodash';
 import classNames from 'classnames';
 
 const ENTER_KEY = 13;
+const ESCAPE_KEY = 27;
+
 const ALL_TODOS = 'all';
 const ACTIVE_TODOS = 'active';
 const COMPLETED_TODOS = 'completed';
@@ -67,8 +69,60 @@ const TodoHeader = React.createClass({
 const TodoItem = React.createClass({
   mixins: [mixin],
 
+  getInitialState() {
+    return {
+      editing: false,
+      editText: this.props.todo.title,
+    };
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      nextProps.todo !== this.props.todo ||
+      nextState.editing !== this.state.editing ||
+      nextState.editText !== this.state.editText
+    );
+  },
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.editing && this.state.editing) {
+      var node = this.refs.editField;
+      node.focus();
+      node.setSelectionRange(node.value.length, node.value.length);
+    }
+  },
+
   handleToggle(e) {
     this.dispatch("todo:toggle", this.props.todo);
+  },
+
+  handleEdit() {
+    this.setState({editing: true});
+  },
+
+  handleUpdate(e) {
+    let value = e.target.value.trim();
+    if (value) {
+      let todo = _.set(this.props.todo, 'title', e.target.value.trim());
+      this.dispatch("todo:update", todo);
+      this.setState({editing: false, editText: todo.title});
+    } else {
+      this.dispatch("todo:destroy", this.props.todo);
+    }
+  },
+
+  handleChange(e) {
+    if (this.state.editing) {
+      this.setState({editText: e.target.value});
+    }
+  },
+
+  handleKeyDown(e) {
+    if (e.which === ESCAPE_KEY) {
+      this.setState({editing: false, editText: this.props.todo.title});
+    } else if (e.which === ENTER_KEY) {
+      this.handleUpdate(e);
+    }
   },
 
   handleDestroy(e) {
@@ -79,7 +133,7 @@ const TodoItem = React.createClass({
     let todo = this.props.todo;
 
     return (
-      <li className={classNames({completed: todo.completed})}>
+      <li className={classNames({completed: todo.completed, editing: this.state.editing})}>
         <div className="view">
           <input
             className="toggle"
@@ -87,7 +141,7 @@ const TodoItem = React.createClass({
             checked={todo.completed}
             onChange={this.handleToggle}
           />
-          <label>
+          <label onDoubleClick={this.handleEdit}>
             {todo.title}
           </label>
           <button className="destroy" onClick={this.handleDestroy} />
@@ -95,6 +149,10 @@ const TodoItem = React.createClass({
         <input
           ref="editField"
           className="edit"
+          value={this.state.editText}
+          onBlur={this.handleUpdate}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
         />
       </li>
     );
@@ -254,9 +312,9 @@ class App extends Flux {
     // Main
     this.on("todo:toggle", (todo) => {
       let newTodos = _.map(this.state.todos, (t) => {
-        let newTodo = t;
-        if (t.id === todo.id) {
-          newTodo.completed = !t.completed
+        let newTodo = _.clone(t, true);
+        if (t.id == todo.id) {
+          newTodo.completed = !t.completed;
           return newTodo;
         }
         return t;
@@ -266,9 +324,23 @@ class App extends Flux {
       });
     });
 
+    this.on("todo:update", (todo) => {
+      let newTodos = _.map(this.state.todos, (t) => {
+        let newTodo = _.clone(t, true);
+        if (t.id == todo.id) {
+          newTodo.title = todo.title;
+          return newTodo;
+        }
+        return t;
+      });
+      this.update((state) => {
+        return _.set(state, 'todos', newTodos);
+      });
+    });
+
     this.on("todo:destroy", (todo) => {
       let newTodos = _.reject(this.state.todos, (t) => {
-        return t.id === todo.id;
+        return t.id == todo.id;
       });
       this.update((state) => {
         return _.set(state, 'todos', newTodos);
@@ -312,11 +384,14 @@ const app = new App({
     nowShowing: ALL_TODOS,
   },
   middlewares: [
+    // Logger
+    /*
     (state) => {
       console.log("state:");
       console.dir(state);
       return state;
     }
+    */
   ]
 });
 app.update(x => x);
