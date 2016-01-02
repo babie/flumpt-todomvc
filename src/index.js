@@ -1,6 +1,7 @@
 import React from "react";
 import {Flux, Component, mixin} from 'flumpt';
 import ReactDOM from 'react-dom';
+import _ from 'lodash';
 
 const ENTER_KEY = 13;
 
@@ -45,6 +46,11 @@ const TodoHeader = React.createClass({
 
 const TodoItem = React.createClass({
   mixins: [mixin],
+
+  handleToggle() {
+    // TODO
+  },
+
   render() {
     let todo = this.props.todo;
 
@@ -55,6 +61,7 @@ const TodoItem = React.createClass({
             className="toggle"
             type="checkbox"
             checked={todo.completed}
+            onChange={this.handleToggle}
           />
           <label>
             {todo.title}
@@ -76,7 +83,7 @@ const TodoMain = React.createClass({
     let todos = this.props.todos;
     let todoItems = todos.map((todo) => {
       return (
-        <TodoItem todo={todo} />
+        <TodoItem key={todo.id} todo={todo} />
       );
     });
 
@@ -163,8 +170,12 @@ class App extends Flux {
       }
     });
     this.on("todo:clear-completed", () => {
-      // TODO: clear completed todos
-      console.log("clear-completed")
+      let newTodos = _.reject(this.state.todos, (todo) => {
+        return todo.completed == true
+      });
+      this.update(({todos}) => {
+        return {todos: newTodos};
+      });
     });
   }
   render(state) {
