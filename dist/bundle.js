@@ -32589,15 +32589,13 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _utils = require('./utils');
+var _todo = require('./models/todo');
+
+var _todo2 = _interopRequireDefault(_todo);
 
 var _app = require('./app');
 
 var _app2 = _interopRequireDefault(_app);
-
-var _todo = require('./models/todo');
-
-var _todo2 = _interopRequireDefault(_todo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32606,7 +32604,7 @@ var app = new _app2.default({
     _reactDom2.default.render(el, document.querySelector(".todoapp"));
   },
   initialState: {
-    todos: [{ id: _utils.UUID.gen(), title: "やること1", completed: true }, { id: _utils.UUID.gen(), title: "やること2", completed: true }, { id: _utils.UUID.gen(), title: "やること3", completed: false }, { id: _utils.UUID.gen(), title: "やること4", completed: false }, { id: _utils.UUID.gen(), title: "やること5", completed: false }],
+    todos: [],
     nowShowing: _todo2.default.ALL
   },
   middlewares: [
@@ -32624,7 +32622,7 @@ app.update(function (x) {
   return x;
 });
 
-},{"./app":163,"./models/todo":170,"./utils":171,"react-dom":6}],170:[function(require,module,exports){
+},{"./app":163,"./models/todo":170,"react-dom":6}],170:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
