@@ -32637,7 +32637,7 @@ exports.default = KeyCode;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var Utils = {
+var UUID = {
   gen: function gen() {
     var i = undefined,
         random = undefined;
@@ -32654,6 +32654,6 @@ var Utils = {
   }
 };
 
-exports.default = Utils;
+exports.default = UUID;
 
 },{}]},{},[167]);

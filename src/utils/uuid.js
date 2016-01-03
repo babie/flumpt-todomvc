@@ -1,4 +1,4 @@
-const Utils = {
+const UUID = {
   gen() {
     let i, random;
     let uuid = '';
@@ -14,4 +14,4 @@ const Utils = {
   },
 };
 
-export default Utils;
+export default UUID;
