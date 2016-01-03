@@ -32015,17 +32015,15 @@ module.exports = require('./lib/React');
 },{"./lib/React":30}],163:[function(require,module,exports){
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
 var _flumpt = require('flumpt');
-
-var _reactDom = require('react-dom');
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _lodash = require('lodash');
 
@@ -32035,200 +32033,15 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _todo = require('../models/todo');
+
+var _todo2 = _interopRequireDefault(_todo);
+
+var _item = require('./item');
+
+var _item2 = _interopRequireDefault(_item);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ENTER_KEY = 13;
-var ESCAPE_KEY = 27;
-
-var ALL_TODOS = 'all';
-var ACTIVE_TODOS = 'active';
-var COMPLETED_TODOS = 'completed';
-
-var Utils = {
-  uuid: function uuid() {
-    var i = undefined,
-        random = undefined;
-    var uuid = '';
-
-    for (i = 0; i < 32; i++) {
-      random = Math.random() * 16 | 0;
-      if (i === 8 || i === 12 || i === 16 || i == 20) {
-        uuid += '-';
-      }
-      uuid += (i === 12 ? 4 : i === 16 ? random & 3 | 8 : random).toString(16);
-    }
-    return uuid;
-  }
-};
-
-var TodoHeader = _react2.default.createClass({
-  mixins: [_flumpt.mixin],
-  getInitialState: function getInitialState() {
-    return {
-      newTodo: ""
-    };
-  },
-  handleCreate: function handleCreate(e) {
-    if (e.keyCode !== ENTER_KEY) {
-      return;
-    }
-    e.preventDefault();
-
-    this.dispatch("todo:create", e.target.value.trim());
-    this.setState({ newTodo: '' });
-  },
-  handleChange: function handleChange(e) {
-    this.setState({ newTodo: e.target.value });
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'header',
-      { className: 'header' },
-      _react2.default.createElement(
-        'h1',
-        null,
-        'todos'
-      ),
-      _react2.default.createElement('input', {
-        className: 'new-todo',
-        placeholder: 'What needs to be done?',
-        autofocus: true,
-        value: this.state.newTodo,
-        onKeyDown: this.handleCreate,
-        onChange: this.handleChange
-      })
-    );
-  }
-});
-
-var TodoItem = _react2.default.createClass({
-  mixins: [_flumpt.mixin],
-
-  getInitialState: function getInitialState() {
-    return {
-      editing: false,
-      editText: this.props.todo.title
-    };
-  },
-  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.todo !== this.props.todo || nextState.editing !== this.state.editing || nextState.editText !== this.state.editText;
-  },
-  componentDidUpdate: function componentDidUpdate(prevProps) {
-    if (!prevProps.editing && this.state.editing) {
-      var node = this.refs.editField;
-      node.focus();
-      node.setSelectionRange(node.value.length, node.value.length);
-    }
-  },
-  handleToggle: function handleToggle(e) {
-    this.dispatch("todo:toggle", this.props.todo);
-  },
-  handleEdit: function handleEdit() {
-    this.setState({ editing: true });
-  },
-  handleUpdate: function handleUpdate(e) {
-    var value = e.target.value.trim();
-    if (value) {
-      var todo = _lodash2.default.set(this.props.todo, 'title', e.target.value.trim());
-      this.dispatch("todo:update", todo);
-      this.setState({ editing: false, editText: todo.title });
-    } else {
-      this.dispatch("todo:destroy", this.props.todo);
-    }
-  },
-  handleChange: function handleChange(e) {
-    if (this.state.editing) {
-      this.setState({ editText: e.target.value });
-    }
-  },
-  handleKeyDown: function handleKeyDown(e) {
-    if (e.which === ESCAPE_KEY) {
-      this.setState({ editing: false, editText: this.props.todo.title });
-    } else if (e.which === ENTER_KEY) {
-      this.handleUpdate(e);
-    }
-  },
-  handleDestroy: function handleDestroy(e) {
-    this.dispatch("todo:destroy", this.props.todo);
-  },
-  render: function render() {
-    var todo = this.props.todo;
-
-    return _react2.default.createElement(
-      'li',
-      { className: (0, _classnames2.default)({ completed: todo.completed, editing: this.state.editing }) },
-      _react2.default.createElement(
-        'div',
-        { className: 'view' },
-        _react2.default.createElement('input', {
-          className: 'toggle',
-          type: 'checkbox',
-          checked: todo.completed,
-          onChange: this.handleToggle
-        }),
-        _react2.default.createElement(
-          'label',
-          { onDoubleClick: this.handleEdit },
-          todo.title
-        ),
-        _react2.default.createElement('button', { className: 'destroy', onClick: this.handleDestroy })
-      ),
-      _react2.default.createElement('input', {
-        ref: 'editField',
-        className: 'edit',
-        value: this.state.editText,
-        onBlur: this.handleUpdate,
-        onChange: this.handleChange,
-        onKeyDown: this.handleKeyDown
-      })
-    );
-  }
-});
-
-var TodoMain = _react2.default.createClass({
-  mixins: [_flumpt.mixin],
-
-  render: function render() {
-    var _this = this;
-
-    var todos = this.props.todos;
-
-    var shownTodos = _lodash2.default.filter(todos, function (todo) {
-      switch (_this.props.nowShowing) {
-        case ACTIVE_TODOS:
-          return !todo.completed;
-        case COMPLETED_TODOS:
-          return todo.completed;
-        default:
-          return true;
-      }
-    }, this);
-
-    var todoItems = shownTodos.map(function (todo) {
-      return _react2.default.createElement(TodoItem, { key: todo.id, todo: todo });
-    });
-
-    return _react2.default.createElement(
-      'section',
-      { className: 'main' },
-      _react2.default.createElement('input', {
-        className: 'toggle-all',
-        type: 'checkbox'
-      }),
-      _react2.default.createElement(
-        'ul',
-        { className: 'todo-list' },
-        todoItems
-      )
-    );
-  }
-});
 
 var TodoFooter = _react2.default.createClass({
   mixins: [_flumpt.mixin],
@@ -32237,13 +32050,13 @@ var TodoFooter = _react2.default.createClass({
     this.dispatch("todo:clear-completed");
   },
   handleAllClick: function handleAllClick(e) {
-    this.dispatch("showing:change", ALL_TODOS);
+    this.dispatch("showing:change", _todo2.default.ALL);
   },
   handleActiveClick: function handleActiveClick(e) {
-    this.dispatch("showing:change", ACTIVE_TODOS);
+    this.dispatch("showing:change", _todo2.default.ACTIVE);
   },
   handleCompletedClick: function handleCompletedClick(e) {
-    this.dispatch("showing:change", COMPLETED_TODOS);
+    this.dispatch("showing:change", _todo2.default.COMPLETED);
   },
   render: function render() {
     var todos = this.props.todos;
@@ -32289,7 +32102,7 @@ var TodoFooter = _react2.default.createClass({
           _react2.default.createElement(
             'a',
             { href: '#/',
-              className: (0, _classnames2.default)({ selected: nowShowing === ALL_TODOS }),
+              className: (0, _classnames2.default)({ selected: nowShowing === _todo2.default.ALL }),
               onClick: this.handleAllClick },
             'All'
           )
@@ -32300,7 +32113,7 @@ var TodoFooter = _react2.default.createClass({
           _react2.default.createElement(
             'a',
             { href: '#/active',
-              className: (0, _classnames2.default)({ selected: nowShowing === ACTIVE_TODOS }),
+              className: (0, _classnames2.default)({ selected: nowShowing === _todo2.default.ACTIVE }),
               onClick: this.handleActiveClick },
             'Active'
           )
@@ -32311,7 +32124,7 @@ var TodoFooter = _react2.default.createClass({
           _react2.default.createElement(
             'a',
             { href: '#/completed',
-              className: (0, _classnames2.default)({ selected: nowShowing === COMPLETED_TODOS }),
+              className: (0, _classnames2.default)({ selected: nowShowing === _todo2.default.COMPLETED }),
               onClick: this.handleCompletedClick },
             'Completed'
           )
@@ -32321,6 +32134,295 @@ var TodoFooter = _react2.default.createClass({
     );
   }
 });
+
+exports.default = TodoFooter;
+
+},{"../models/todo":168,"./item":165,"classnames":3,"flumpt":4,"lodash":5,"react":162}],164:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _flumpt = require('flumpt');
+
+var _utils = require('../utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TodoHeader = _react2.default.createClass({
+  mixins: [_flumpt.mixin],
+  getInitialState: function getInitialState() {
+    return {
+      newTodo: ""
+    };
+  },
+  handleCreate: function handleCreate(e) {
+    if (e.keyCode !== _utils.KeyCode.ENTER_KEY) {
+      return;
+    }
+    e.preventDefault();
+
+    this.dispatch("todo:create", e.target.value.trim());
+    this.setState({ newTodo: '' });
+  },
+  handleChange: function handleChange(e) {
+    this.setState({ newTodo: e.target.value });
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'header',
+      { className: 'header' },
+      _react2.default.createElement(
+        'h1',
+        null,
+        'todos'
+      ),
+      _react2.default.createElement('input', {
+        className: 'new-todo',
+        placeholder: 'What needs to be done?',
+        autofocus: true,
+        value: this.state.newTodo,
+        onKeyDown: this.handleCreate,
+        onChange: this.handleChange
+      })
+    );
+  }
+});
+exports.default = TodoHeader;
+
+},{"../utils":169,"flumpt":4,"react":162}],165:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _flumpt = require('flumpt');
+
+var _utils = require('../utils');
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TodoItem = _react2.default.createClass({
+  mixins: [_flumpt.mixin],
+
+  getInitialState: function getInitialState() {
+    return {
+      editing: false,
+      editText: this.props.todo.title
+    };
+  },
+  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.todo !== this.props.todo || nextState.editing !== this.state.editing || nextState.editText !== this.state.editText;
+  },
+  componentDidUpdate: function componentDidUpdate(prevProps) {
+    if (!prevProps.editing && this.state.editing) {
+      var node = this.refs.editField;
+      node.focus();
+      node.setSelectionRange(node.value.length, node.value.length);
+    }
+  },
+  handleToggle: function handleToggle(e) {
+    this.dispatch("todo:toggle", this.props.todo);
+  },
+  handleEdit: function handleEdit() {
+    this.setState({ editing: true });
+  },
+  handleUpdate: function handleUpdate(e) {
+    var value = e.target.value.trim();
+    if (value) {
+      var todo = _lodash2.default.set(this.props.todo, 'title', e.target.value.trim());
+      this.dispatch("todo:update", todo);
+      this.setState({ editing: false, editText: todo.title });
+    } else {
+      this.dispatch("todo:destroy", this.props.todo);
+    }
+  },
+  handleChange: function handleChange(e) {
+    if (this.state.editing) {
+      this.setState({ editText: e.target.value });
+    }
+  },
+  handleKeyDown: function handleKeyDown(e) {
+    if (e.which === _utils.KeyCode.ESCAPE_KEY) {
+      this.setState({ editing: false, editText: this.props.todo.title });
+    } else if (e.which === _utils.KeyCode.ENTER_KEY) {
+      this.handleUpdate(e);
+    }
+  },
+  handleDestroy: function handleDestroy(e) {
+    this.dispatch("todo:destroy", this.props.todo);
+  },
+  render: function render() {
+    var todo = this.props.todo;
+
+    return _react2.default.createElement(
+      'li',
+      { className: (0, _classnames2.default)({ completed: todo.completed, editing: this.state.editing }) },
+      _react2.default.createElement(
+        'div',
+        { className: 'view' },
+        _react2.default.createElement('input', {
+          className: 'toggle',
+          type: 'checkbox',
+          checked: todo.completed,
+          onChange: this.handleToggle
+        }),
+        _react2.default.createElement(
+          'label',
+          { onDoubleClick: this.handleEdit },
+          todo.title
+        ),
+        _react2.default.createElement('button', { className: 'destroy', onClick: this.handleDestroy })
+      ),
+      _react2.default.createElement('input', {
+        ref: 'editField',
+        className: 'edit',
+        value: this.state.editText,
+        onBlur: this.handleUpdate,
+        onChange: this.handleChange,
+        onKeyDown: this.handleKeyDown
+      })
+    );
+  }
+});
+exports.default = TodoItem;
+
+},{"../utils":169,"classnames":3,"flumpt":4,"lodash":5,"react":162}],166:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _flumpt = require('flumpt');
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _utils = require('../utils');
+
+var _todo = require('../models/todo');
+
+var _todo2 = _interopRequireDefault(_todo);
+
+var _item = require('./item');
+
+var _item2 = _interopRequireDefault(_item);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TodoMain = _react2.default.createClass({
+  mixins: [_flumpt.mixin],
+
+  render: function render() {
+    var _this = this;
+
+    var todos = this.props.todos;
+
+    var shownTodos = _lodash2.default.filter(todos, function (todo) {
+      switch (_this.props.nowShowing) {
+        case _todo2.default.ACTIVE:
+          return !todo.completed;
+        case _todo2.default.COMPLETED:
+          return todo.completed;
+        default:
+          return true;
+      }
+    }, this);
+
+    var todoItems = shownTodos.map(function (todo) {
+      return _react2.default.createElement(_item2.default, { key: todo.id, todo: todo });
+    });
+
+    return _react2.default.createElement(
+      'section',
+      { className: 'main' },
+      _react2.default.createElement('input', {
+        className: 'toggle-all',
+        type: 'checkbox'
+      }),
+      _react2.default.createElement(
+        'ul',
+        { className: 'todo-list' },
+        todoItems
+      )
+    );
+  }
+});
+
+exports.default = TodoMain;
+
+},{"../models/todo":168,"../utils":169,"./item":165,"flumpt":4,"lodash":5,"react":162}],167:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _flumpt = require('flumpt');
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _utils = require('./utils');
+
+var _todo = require('./models/todo');
+
+var _todo2 = _interopRequireDefault(_todo);
+
+var _header = require('./components/header');
+
+var _header2 = _interopRequireDefault(_header);
+
+var _main = require('./components/main');
+
+var _main2 = _interopRequireDefault(_main);
+
+var _footer = require('./components/footer');
+
+var _footer2 = _interopRequireDefault(_footer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var TodoApp = (function (_Component) {
   _inherits(TodoApp, _Component);
@@ -32337,14 +32439,14 @@ var TodoApp = (function (_Component) {
       var main = null;
       var footer = null;
       if (this.props.todos.length > 0) {
-        main = _react2.default.createElement(TodoMain, this.props);
-        footer = _react2.default.createElement(TodoFooter, this.props);
+        main = _react2.default.createElement(_main2.default, this.props);
+        footer = _react2.default.createElement(_footer2.default, this.props);
       }
 
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(TodoHeader, this.props),
+        _react2.default.createElement(_header2.default, this.props),
         main,
         footer
       );
@@ -32368,19 +32470,19 @@ var App = (function (_Flux) {
   _createClass(App, [{
     key: 'subscribe',
     value: function subscribe() {
-      var _this4 = this;
+      var _this3 = this;
 
       // Header
       this.on("todo:create", function (newTodoTitle) {
         if (newTodoTitle) {
           (function () {
             var newTodo = {
-              id: Utils.uuid(),
+              id: _utils.UUID.gen(),
               title: newTodoTitle,
               completed: false
             };
-            var newTodos = _this4.state.todos.concat([newTodo]);
-            _this4.update(function (state) {
+            var newTodos = _this3.state.todos.concat([newTodo]);
+            _this3.update(function (state) {
               return _lodash2.default.set(state, 'todos', newTodos);
             });
           })();
@@ -32389,7 +32491,7 @@ var App = (function (_Flux) {
 
       // Main
       this.on("todo:toggle", function (todo) {
-        var newTodos = _lodash2.default.map(_this4.state.todos, function (t) {
+        var newTodos = _lodash2.default.map(_this3.state.todos, function (t) {
           var newTodo = _lodash2.default.clone(t, true);
           if (t.id == todo.id) {
             newTodo.completed = !t.completed;
@@ -32397,13 +32499,13 @@ var App = (function (_Flux) {
           }
           return t;
         });
-        _this4.update(function (state) {
+        _this3.update(function (state) {
           return _lodash2.default.set(state, 'todos', newTodos);
         });
       });
 
       this.on("todo:update", function (todo) {
-        var newTodos = _lodash2.default.map(_this4.state.todos, function (t) {
+        var newTodos = _lodash2.default.map(_this3.state.todos, function (t) {
           var newTodo = _lodash2.default.clone(t, true);
           if (t.id == todo.id) {
             newTodo.title = todo.title;
@@ -32411,32 +32513,32 @@ var App = (function (_Flux) {
           }
           return t;
         });
-        _this4.update(function (state) {
+        _this3.update(function (state) {
           return _lodash2.default.set(state, 'todos', newTodos);
         });
       });
 
       this.on("todo:destroy", function (todo) {
-        var newTodos = _lodash2.default.reject(_this4.state.todos, function (t) {
+        var newTodos = _lodash2.default.reject(_this3.state.todos, function (t) {
           return t.id == todo.id;
         });
-        _this4.update(function (state) {
+        _this3.update(function (state) {
           return _lodash2.default.set(state, 'todos', newTodos);
         });
       });
 
       // Footer
       this.on("showing:change", function (newShowing) {
-        _this4.update(function (state) {
+        _this3.update(function (state) {
           return _lodash2.default.set(state, 'nowShowing', newShowing);
         });
       });
 
       this.on("todo:clear-completed", function () {
-        var newTodos = _lodash2.default.reject(_this4.state.todos, function (todo) {
+        var newTodos = _lodash2.default.reject(_this3.state.todos, function (todo) {
           return todo.completed == true;
         });
-        _this4.update(function (state) {
+        _this3.update(function (state) {
           return _lodash2.default.set(state, 'todos', newTodos);
         });
       });
@@ -32458,8 +32560,8 @@ var app = new App({
     _reactDom2.default.render(el, document.querySelector(".todoapp"));
   },
   initialState: {
-    todos: [{ id: Utils.uuid(), title: "やること1", completed: true }, { id: Utils.uuid(), title: "やること2", completed: true }, { id: Utils.uuid(), title: "やること3", completed: false }, { id: Utils.uuid(), title: "やること4", completed: false }, { id: Utils.uuid(), title: "やること5", completed: false }],
-    nowShowing: ALL_TODOS
+    todos: [{ id: _utils.UUID.gen(), title: "やること1", completed: true }, { id: _utils.UUID.gen(), title: "やること2", completed: true }, { id: _utils.UUID.gen(), title: "やること3", completed: false }, { id: _utils.UUID.gen(), title: "やること4", completed: false }, { id: _utils.UUID.gen(), title: "やること5", completed: false }],
+    nowShowing: _todo2.default.ALL
   },
   middlewares: [
     // Logger
@@ -32476,4 +32578,82 @@ app.update(function (x) {
   return x;
 });
 
-},{"classnames":3,"flumpt":4,"lodash":5,"react":162,"react-dom":6}]},{},[163]);
+},{"./components/footer":163,"./components/header":164,"./components/main":166,"./models/todo":168,"./utils":169,"classnames":3,"flumpt":4,"lodash":5,"react":162,"react-dom":6}],168:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Todo = function Todo() {
+  _classCallCheck(this, Todo);
+};
+
+Todo.ALL = 'all';
+Todo.ACTIVE = 'active';
+Todo.COMPLETED = 'completed';
+
+exports.default = Todo;
+
+},{}],169:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.KeyCode = exports.UUID = undefined;
+
+var _uuid = require('./utils/uuid');
+
+var _uuid2 = _interopRequireDefault(_uuid);
+
+var _keycode = require('./utils/keycode');
+
+var _keycode2 = _interopRequireDefault(_keycode);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.UUID = _uuid2.default;
+exports.KeyCode = _keycode2.default;
+
+},{"./utils/keycode":170,"./utils/uuid":171}],170:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var KeyCode = {
+  ENTER_KEY: 13,
+  ESCAPE_KEY: 27
+};
+
+exports.default = KeyCode;
+
+},{}],171:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var Utils = {
+  gen: function gen() {
+    var i = undefined,
+        random = undefined;
+    var uuid = '';
+
+    for (i = 0; i < 32; i++) {
+      random = Math.random() * 16 | 0;
+      if (i === 8 || i === 12 || i === 16 || i == 20) {
+        uuid += '-';
+      }
+      uuid += (i === 12 ? 4 : i === 16 ? random & 3 | 8 : random).toString(16);
+    }
+    return uuid;
+  }
+};
+
+exports.default = Utils;
+
+},{}]},{},[167]);
