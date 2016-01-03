@@ -101,9 +101,9 @@ const TodoItem = React.createClass({
   },
 
   handleUpdate(e) {
-    let value = e.target.value.trim();
+    const value = e.target.value.trim();
     if (value) {
-      let todo = _.set(this.props.todo, 'title', e.target.value.trim());
+      const todo = _.set(this.props.todo, 'title', e.target.value.trim());
       this.dispatch("todo:update", todo);
       this.setState({editing: false, editText: todo.title});
     } else {
@@ -130,7 +130,7 @@ const TodoItem = React.createClass({
   },
 
   render() {
-    let todo = this.props.todo;
+    const todo = this.props.todo;
 
     return (
       <li className={classNames({completed: todo.completed, editing: this.state.editing})}>
@@ -163,9 +163,9 @@ const TodoMain = React.createClass({
   mixins: [mixin],
 
   render() {
-    let todos = this.props.todos;
+    const todos = this.props.todos;
 
-    let shownTodos = _.filter(todos, (todo) => {
+    const shownTodos = _.filter(todos, (todo) => {
       switch (this.props.nowShowing) {
         case ACTIVE_TODOS:
           return !todo.completed;
@@ -176,7 +176,7 @@ const TodoMain = React.createClass({
       }
     }, this);
 
-    let todoItems = shownTodos.map((todo) => {
+    const todoItems = shownTodos.map((todo) => {
       return (
         <TodoItem key={todo.id} todo={todo} />
       );
@@ -216,13 +216,13 @@ const TodoFooter = React.createClass({
   },
 
   render() {
-    let todos = this.props.todos;
-    let activeCount = todos.reduce((acc, todo) => {
+    const todos = this.props.todos;
+    const activeCount = todos.reduce((acc, todo) => {
       return todo.completed ? acc : acc + 1;
     }, 0);
-    let unitStr = activeCount > 1 ? 'items' : 'item';
-    let completedCount = todos.length - activeCount;
-    let nowShowing = this.props.nowShowing;
+    const unitStr = activeCount > 1 ? 'items' : 'item';
+    const completedCount = todos.length - activeCount;
+    const nowShowing = this.props.nowShowing;
 
     let clearButton = null;
     if (completedCount > 0) {
@@ -297,12 +297,12 @@ class App extends Flux {
     // Header
     this.on("todo:create", (newTodoTitle) => {
       if (newTodoTitle) {
-        let newTodo = {
+        const newTodo = {
           id: Utils.uuid(),
           title: newTodoTitle,
           completed: false
         };
-        let newTodos = this.state.todos.concat([newTodo]);
+        const newTodos = this.state.todos.concat([newTodo]);
         this.update((state) => {
           return _.set(state, 'todos', newTodos);
         });
@@ -311,7 +311,7 @@ class App extends Flux {
 
     // Main
     this.on("todo:toggle", (todo) => {
-      let newTodos = _.map(this.state.todos, (t) => {
+      const newTodos = _.map(this.state.todos, (t) => {
         let newTodo = _.clone(t, true);
         if (t.id == todo.id) {
           newTodo.completed = !t.completed;
@@ -325,7 +325,7 @@ class App extends Flux {
     });
 
     this.on("todo:update", (todo) => {
-      let newTodos = _.map(this.state.todos, (t) => {
+      const newTodos = _.map(this.state.todos, (t) => {
         let newTodo = _.clone(t, true);
         if (t.id == todo.id) {
           newTodo.title = todo.title;
@@ -339,7 +339,7 @@ class App extends Flux {
     });
 
     this.on("todo:destroy", (todo) => {
-      let newTodos = _.reject(this.state.todos, (t) => {
+      const newTodos = _.reject(this.state.todos, (t) => {
         return t.id == todo.id;
       });
       this.update((state) => {
@@ -355,7 +355,7 @@ class App extends Flux {
     });
 
     this.on("todo:clear-completed", () => {
-      let newTodos = _.reject(this.state.todos, (todo) => {
+      const newTodos = _.reject(this.state.todos, (todo) => {
         return todo.completed == true
       });
       this.update((state) => {
