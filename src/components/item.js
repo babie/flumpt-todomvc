@@ -1,18 +1,25 @@
 import React from "react";
-import {mixin} from 'flumpt';
+import {Component} from 'flumpt';
 import {KeyCode} from '../utils';
 import _ from 'lodash';
 import classNames from 'classnames';
 
-const TodoItem = React.createClass({
-  mixins: [mixin],
-
-  getInitialState() {
-    return {
+class TodoItem extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
       editing: false,
-      editText: this.props.todo.title,
+      editText: props.todo.title
     };
-  },
+    this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleDestroy = this.handleDestroy.bind(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
@@ -20,7 +27,7 @@ const TodoItem = React.createClass({
       nextState.editing !== this.state.editing ||
       nextState.editText !== this.state.editText
     );
-  },
+  }
 
   componentDidUpdate(prevProps) {
     if (!prevProps.editing && this.state.editing) {
@@ -28,15 +35,15 @@ const TodoItem = React.createClass({
       node.focus();
       node.setSelectionRange(node.value.length, node.value.length);
     }
-  },
+  }
 
   handleToggle(e) {
     this.dispatch("todo:toggle", this.props.todo);
-  },
+  }
 
   handleEdit() {
     this.setState({editing: true});
-  },
+  }
 
   handleUpdate(e) {
     const value = e.target.value.trim();
@@ -47,13 +54,13 @@ const TodoItem = React.createClass({
     } else {
       this.dispatch("todo:destroy", this.props.todo);
     }
-  },
+  }
 
   handleChange(e) {
     if (this.state.editing) {
       this.setState({editText: e.target.value});
     }
-  },
+  }
 
   handleKeyDown(e) {
     if (e.which === KeyCode.ESCAPE_KEY) {
@@ -61,11 +68,11 @@ const TodoItem = React.createClass({
     } else if (e.which === KeyCode.ENTER_KEY) {
       this.handleUpdate(e);
     }
-  },
+  }
 
   handleDestroy(e) {
     this.dispatch("todo:destroy", this.props.todo);
-  },
+  }
 
   render() {
     const todo = this.props.todo;
@@ -95,5 +102,6 @@ const TodoItem = React.createClass({
       </li>
     );
   }
-});
+}
+
 export default TodoItem;
