@@ -1,29 +1,35 @@
 import React from "react";
-import {mixin} from 'flumpt';
+import {Component} from 'flumpt';
 import _ from 'lodash';
 import classNames from 'classnames';
 
 import Todo from '../models/todo';
 import TodoItem from './item';
 
-const TodoFooter = React.createClass({
-  mixins: [mixin],
-
+class TodoFooter extends Component {
+  constructor() {
+    super();
+    this.handleClearCompleted = this.handleClearCompleted.bind(this);
+    this.handleAllClick = this.handleAllClick.bind(this);
+    this.handleActiveClick = this.handleActiveClick.bind(this);
+    this.handleCompletedClick = this.handleCompletedClick.bind(this);
+  }
+  
   handleClearCompleted(e) {
     this.dispatch("todo:clear-completed");
-  },
+  }
 
   handleAllClick(e) {
     this.dispatch("showing:change", Todo.ALL);
-  },
+  }
 
   handleActiveClick(e) {
     this.dispatch("showing:change", Todo.ACTIVE);
-  },
+  }
 
   handleCompletedClick(e) {
     this.dispatch("showing:change", Todo.COMPLETED);
-  },
+  }
 
   render() {
     const todos = this.props.todos;
@@ -77,6 +83,6 @@ const TodoFooter = React.createClass({
       </footer>
     );
   }
-});
+}
 
 export default TodoFooter;

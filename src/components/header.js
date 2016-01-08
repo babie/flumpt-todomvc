@@ -1,14 +1,14 @@
 import React from "react";
-import {mixin} from 'flumpt';
+import {Component} from 'flumpt';
 import {KeyCode} from '../utils';
 
-const TodoHeader = React.createClass({
-  mixins: [mixin],
-  getInitialState() {
-    return {
-      newTodo: ""
-    };
-  },
+class TodoHeader extends Component {
+  constructor() {
+    super();
+    this.state = {newTodo: ""};
+    this.handleCreate = this.handleCreate.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
   handleCreate(e) {
     if (e.keyCode !== KeyCode.ENTER_KEY) {
@@ -18,11 +18,11 @@ const TodoHeader = React.createClass({
 
     this.dispatch("todo:create", e.target.value.trim());
     this.setState({newTodo: ''});
-  },
+  }
 
   handleChange(e) {
     this.setState({newTodo: e.target.value})
-  },
+  }
 
   render() {
     return (
@@ -39,5 +39,6 @@ const TodoHeader = React.createClass({
       </header>
     );
   }
-});
+}
+
 export default TodoHeader;

@@ -1,13 +1,12 @@
 import React from "react";
-import {mixin} from 'flumpt';
+import {Component} from 'flumpt';
 import _ from 'lodash';
 
 import {UUID, KeyCode} from '../utils';
 import Todo from '../models/todo';
 import TodoItem from './item';
 
-const TodoMain = React.createClass({
-  mixins: [mixin],
+class TodoMain extends Component {
 
   render() {
     const todos = this.props.todos;
@@ -41,6 +40,6 @@ const TodoMain = React.createClass({
       </section>
     );
   }
-});
+}
 
 export default TodoMain;
